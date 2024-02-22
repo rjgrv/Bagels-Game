@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bagels Game</title>
+<style>
+    
+    body {
+        font-family: Arial, sans-serif;
+        font-weight: bolder;
+        font-style: italic;
+
+        background: rgb(0,52,255);
+        background: linear-gradient(90deg, rgba(0,52,255,1) 0%, rgba(86,128,249,1) 8%, rgba(177,236,187,1) 40%, rgba(185,254,177,1) 55%, rgba(148,241,143,1) 67%, rgba(51,205,23,1) 90%, rgba(106,196,8,1) 100%);
+    }
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        background: rgb(174,191,240);
+        background: linear-gradient(90deg, rgba(174,191,240,1) 8%, rgba(170,230,166,1) 49%, rgba(50,224,58,1) 100%);
+    } 
+    h1{
+        font-size: 40px;
+        color: blue;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-align: center;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+    button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    li{
+        font-size: 18px;
+        color: #007bff;
+        font-family: cursive;
+    }
+    p{
+        font-size: 18px;
+        color: blueviolet;
+        font-family: cursive;
+    }
+    
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>BAGELS GAME!</h1>
+    <p>By RAJ GAURAV </p>
+    <p>I am thinking of a 3-digit number. Try to guess what it is.</p>
+    <p>Here are some clues:</p>
+    <ul>
+        <li>When I say "Pico" - One digit is correct but in the wrong position.</li><br>
+        <li>When I say "Fermi" - One digit is correct and in the right position.</li><br>
+        <li>When I say "Bagels" - No digit is correct.</li><br>
+    </ul>
+    <p>I have thought up a number. You have 10 guesses to get it.</p>
+    <input type="text" id="guessInput" maxlength="3">
+    <button class="guessForm" onclick="playGame()">Guess</button>
+    <div id="result"></div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+function generateSecretNumber() {
+    let secretNumber = '';
+    const digits = '0123456789';
+    for (let i = 0; i < 3; i++) {
+        const index = Math.floor(Math.random() * digits.length);
+        secretNumber += digits[index];
+    }
+    return secretNumber;
+}
+
+function provideHint(secretNumber, guess) {
+    let hint = '';
+    for (let i = 0; i < 3; i++) {
+        if (guess[i] === secretNumber[i]) {
+            hint += 'Fermi ';
+        } else if (secretNumber.includes(guess[i])) {
+            hint += 'Pico ';
+        }
+    }
+    if (!hint) {
+        hint = 'Bagels';
+    }
+    return hint.trim();
+}
+
+let secretNumber = generateSecretNumber();
+let attempts = 10;
+
+document.querySelector('.guessForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    playGame();
+});
+
+function playGame() {
+    const guessInput = document.getElementById('guessInput');
+    const guess = guessInput.value;
+    if (guess.length !== 3 || !/^\d+$/.test(guess)) {
+        alert('Please enter a valid 3-digit number.');
+        return;
+    }
+
+    const resultDiv = document.getElementById('result');
+    document.getElementById("result").style.color = "black";
+    const hint = provideHint(secretNumber, guess);
+    resultDiv.innerHTML += `<p>Guess ${11-attempts}: ${guess} - ${hint}</p>`;
+
+    if (hint === 'Fermi Fermi Fermi') {
+        resultDiv.innerHTML += `<p>You Got It!!
+            Refresh the page to Play again.</p>`;
+        guessInput.disabled = true;
+    }
+
+    attempts--;
+    if (attempts === 0) {
+        resultDiv.innerHTML += `<p>Sorry! You ran out of attempts! The Secret Number was ${secretNumber}. 
+            Refresh the page to Play again.</p>`;
+        guessInput.disabled = true;
+    }
+}
+   
+document.getElementById("result").style.color = "#ff0000";
+$("#guessInput").keypress(function(event){
+        if(event.which === 13){
+            $(".guessForm").click();
+            $(this).val('');
+        }
+    }); 
+    
+</script>
+</body>
+</html>
